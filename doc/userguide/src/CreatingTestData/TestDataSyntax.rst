@@ -53,6 +53,10 @@ formats to make it easier to get started writing tests.
 .. note:: The special :file:`.robot` extension with plain text files is
           supported starting from Robot Framework 2.7.6.
 
+In addition to the built-in test data formats, users can supply their own 
+custom parsers, or associate existing parsers with new file extensions. See
+`User Defined Parsers`_ for more information.
+
 HTML format
 ~~~~~~~~~~~
 

@@ -506,3 +506,39 @@ So-called listeners_ can be used for monitoring the test
 execution. They are taken into use with the command line option
 :option:`--listener`, and the specified listeners must be in the `module
 search path`_ similarly as test libraries.
+
+
+User Defined Parsers
+--------------------
+
+By default, robotframework provides parsers for several test data formats such  
+as tab-separated values in \*.tsv files, or HTML in \*.html files. In addition 
+to the these built in parsers it is possible to specify user defined parsers to
+handle files of a given extension. There are two main use cases for specifying 
+an alternate parser:
+
+       * To use a built-in parser with an different extension
+       * Provide an alternate file format for defining test cases such as an 
+         XML file or spreadsheet.
+
+User parsers can be specified on the command line with the --parser option. As 
+an example, to associate files with the extension '.rtext' to the existing text
+parser, use the following:
+
+.. code::
+
+       pybot --parser rtext:robot.parsing.txtreader.TxtReader test_data.rtext
+       
+To specify a custom parser for xml files, specify a class on the 
+`module search path`_ as well as the extension it should handle. A user defined
+XML parser could be invoked by:
+
+.. code::
+       
+       pybot --parser xml:myparser.XmlReader test_data.xml
+       
+User define parsers must be python classes that implement the read() method.
+See the implementation of the built in robot.parsing.tsvreader and 
+robot.parsing.txtreader modules and the `API documentation`_ for more
+information on implementing parsers.
+

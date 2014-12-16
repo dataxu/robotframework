@@ -252,6 +252,12 @@ Options
                           Arguments to listener class can be given after class
                           name, using colon as separator. For example:
                           --listener MyListenerClass:arg1:arg2
+    --parser ext:class *  Specify an importable function to be used for parsing
+                          data files ending in the given file extention. 
+                          Specifying standard extensions such as 'txt' or 'tsv'
+                          will override the builtin parsers. 
+                          See robot.parsing.tsvreader to see how an existing
+                          parser is implemented.
     --warnonskippedfiles  If this option is used, skipped test data files will
                           cause a warning that is visible in the console output
                           and the log file. By default skipped files only cause

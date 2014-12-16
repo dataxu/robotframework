@@ -56,6 +56,7 @@ Command line options for test execution
                           generated log file.
   --flattenkeywords <name:pattern>  `Flattens keywords`_ in the generated log file.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
+  --parser <ext:class>    `Specifies a user parser`_ class for the given file extension
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
@@ -168,6 +169,7 @@ Command line options for post-processing outputs
 .. _external links: `Creating links from tag names`_
 
 .. _Sets a listener: `Setting listeners`_
+.. _Specifies a user parser: `User Defined Parsers`_
 .. _an invalid file is skipped: `Warning on invalid files`_
 .. _test suites are empty: `When no tests match selection`_
 .. _empty test suites: `test suites are empty`_

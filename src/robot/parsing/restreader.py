@@ -18,31 +18,35 @@ from .htmlreader import HtmlReader
 from .txtreader import TxtReader
 
 
-def RestReader():
-    from .restsupport import (publish_doctree, publish_from_doctree,
-                              RobotDataStorage)
-
-    class RestReader(object):
-
-        def read(self, rstfile, rawdata):
-            doctree = publish_doctree(
-                rstfile.read(), source_path=rstfile.name,
-                settings_overrides={'input_encoding': 'UTF-8'})
-            store = RobotDataStorage(doctree)
-            if store.has_data():
-                return self._read_text(store.get_data(), rawdata)
-            return self._read_html(doctree, rawdata)
-
-        def _read_text(self, data, rawdata):
-            txtfile = StringIO(data.encode('UTF-8'))
-            return TxtReader().read(txtfile, rawdata)
-
-        def _read_html(self, doctree, rawdata):
-            htmlfile = StringIO()
-            htmlfile.write(publish_from_doctree(
-                doctree, writer_name='html',
-                settings_overrides={'output_encoding': 'UTF-8'}))
-            htmlfile.seek(0)
-            return HtmlReader().read(htmlfile, rawdata)
-
-    return RestReader()
+class RestReader(object):
+    '''wrapper class for RestReader is just to keep the docutils modules from 
+       being imported unless it's actually being used.
+    '''
+    def __new__(cls):
+        from .restsupport import (publish_doctree, publish_from_doctree,
+                                  RobotDataStorage)
+    
+        class RestReader(object):
+    
+            def read(self, rstfile, rawdata):
+                doctree = publish_doctree(
+                    rstfile.read(), source_path=rstfile.name,
+                    settings_overrides={'input_encoding': 'UTF-8'})
+                store = RobotDataStorage(doctree)
+                if store.has_data():
+                    return self._read_text(store.get_data(), rawdata)
+                return self._read_html(doctree, rawdata)
+    
+            def _read_text(self, data, rawdata):
+                txtfile = StringIO(data.encode('UTF-8'))
+                return TxtReader().read(txtfile, rawdata)
+    
+            def _read_html(self, doctree, rawdata):
+                htmlfile = StringIO()
+                htmlfile.write(publish_from_doctree(
+                    doctree, writer_name='html',
+                    settings_overrides={'output_encoding': 'UTF-8'}))
+                htmlfile.seek(0)
+                return HtmlReader().read(htmlfile, rawdata)
+    
+        return RestReader()

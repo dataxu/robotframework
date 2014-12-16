@@ -22,6 +22,7 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 from robot.result.keywordremover import KeywordRemover
 from robot.result.flattenkeywordmatcher import FlattenKeywordMatcher
+from robot.parsing import VALID_EXTENSIONS, populators
 
 from .gatherfailed import gather_failed_tests
 
@@ -393,12 +394,31 @@ class RobotSettings(_BaseSettings):
                        'Listeners'          : ('listener', []),
                        'MonitorWidth'       : ('monitorwidth', 78),
                        'MonitorMarkers'     : ('monitormarkers', 'AUTO'),
-                       'DebugFile'          : ('debugfile', None)}
+                       'DebugFile'          : ('debugfile', None),
+                       'Parser'             : ('parser', [])}
+
+    def _process_value(self, name, value):
+        if name =='Parser':
+            # add/replace a user define parser
+            for item in value:
+                extension, parserClass = item.split(':')
+                try:
+                    parser = utils.Importer().import_class_or_module(parserClass)
+                    populators.READERS[extension] = parser
+                    VALID_EXTENSIONS = tuple(populators.READERS)
+                except:
+                    raise DataError("Could not import parser %s" % parserClass)
+            return value
+        else:
+            return super(RobotSettings, self)._process_value(name, value)
+
+            
+        
 
     def get_rebot_settings(self):
         settings = RebotSettings()
         settings._opts.update(self._opts)
-        for name in ['Variables', 'VariableFiles', 'Listeners']:
+        for name in ['Variables', 'VariableFiles', 'Listeners', 'Parser']:
             del(settings._opts[name])
         for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:
             settings._opts[name] = []
