@@ -1,0 +1,45 @@
+*** Settings ***
+Force Tags        regression    pybot    jybot
+Resource          cli_resource.txt
+
+
+*** Test Cases ***
+
+Change TSV parser
+	Run Tests  --parser tsv:robot.parsing.txtreader.TxtReader  misc/normal.txt
+
+Expect Error when running TSV with html parser
+	Run Tests Without Processing Output  --parser tsv:robot.parsing.htmlreader.HtmlReader  parsing/data_formats/tsv/sample.tsv
+	Check StdErr contains  failed: File has no test case table.
+
+Assign TXT parser to new extension
+	Run Tests  --parser alt_txt:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers
+Assign TSV parser to new extension
+	Run Tests  --parser alt_tsv:robot.parsing.tsvreader.TsvReader  parsing/data_formats/custom_parsers
+Assign HTML parser to new extension
+	Run Tests  --parser alt_html:robot.parsing.htmlreader.HtmlReader  parsing/data_formats/custom_parsers	
+Assign RST parser to new extension
+	Run Tests  --parser alt_rst:robot.parsing.restreader.RestReader  parsing/data_formats/custom_parsers/sample.alt_rst
+
+Process TXT file with .rst extension
+	Run Tests  --parser rst:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers/txt_file_with_other_extension.rst
+Process TXT file with .html extension
+	Run Tests  --parser html:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers/txt_file_with_other_extension.html
+Process TXT file with .tsv extension
+	Run Tests  --parser tsv:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers/txt_file_with_other_extension.tsv
+
+Specify mulitple parsers
+	Run Tests  --parser alt_tsv:robot.parsing.tsvreader.TsvReader --parser alt_txt:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers/*.alt_txt  parsing/data_formats/custom_parsers/*.alt_tsv
+Specify mulitple parsers with one unused
+	Run Tests  --parser alt_tsv:robot.parsing.tsvreader.TsvReader --parser alt_txt:robot.parsing.txtreader.TxtReader  parsing/data_formats/custom_parsers/*.alt_txt
+
+Confirm error for un-importable parser
+	Run Tests Without Processing Output  --pythonpath ${LIBPATH1}${/}user_parser.py --parser txt:user_parser.BogusParser  misc/normal.txt
+	Check StdErr contains  Could not import parser user_parser.BogusParser
+	
+Specify user supplied parser
+	Run Tests  --pythonpath ${LIBPATH1}${/}user_parser.py --parser alt_txt:user_parser.MyTxtParser  parsing/data_formats/custom_parsers/*.alt_txt
+Replace builtin parser with user parser
+	Run Tests  --pythonpath ${LIBPATH1}${/}user_parser.py --parser txt:user_parser.MyTxtParser  misc/normal.txt
+	Check StdOut contains  Creating user defined parser "MyTxtParser"
+
